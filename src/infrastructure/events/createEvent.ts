@@ -1,5 +1,5 @@
-import { randomUUID } from "crypto";
 import { DomainEvent } from "./domainEvent.js";
+import { ulid } from "ulid";
 
 interface CreateEventParams<TPayload> {
   type: string;
@@ -14,7 +14,7 @@ export const createEvent = <TPayload>(
   params: CreateEventParams<TPayload>
 ): DomainEvent<TPayload> => {
   return {
-    id: randomUUID(),
+    id: ulid(),
     type: params.type,
     occurredAt: new Date().toISOString(),
     aggregateId: params.aggregateId,

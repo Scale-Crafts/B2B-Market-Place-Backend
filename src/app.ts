@@ -5,6 +5,7 @@ import { createEvent } from "./infrastructure/events/createEvent";
 import { EventTypes } from "./infrastructure/events/eventTypes";
 import "./modules/audit/testAuditListener";
 import { createVendor, approveVendor } from "./modules/vendor/index";
+import { adminApproveVendor } from "./modules/admin/application/approveVendor";
 
 export const createApp = () => {
   const app = express();
@@ -32,7 +33,6 @@ export const createApp = () => {
 
   app.post("/__test/vendor", async (req, res) => {
     const vendor = await createVendor({
-      id: "vendor-1",
       name: "Acme Corp",
       correlationId: req.headers["x-correlation-id"] as string,
     });
@@ -47,6 +47,14 @@ export const createApp = () => {
     });
   
     res.status(200).json(vendor);
+  });
+
+  app.post("/__admin/vendor/:id/approve", async (req, res) => {
+    await adminApproveVendor({
+      vendorId: req.params.id,
+      correlationId: req.headers["x-correlation-id"] as string,
+    });
+    res.status(200).json({ status: "approved" });
   });
 
   return app;

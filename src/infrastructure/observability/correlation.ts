@@ -1,5 +1,5 @@
-import { randomUUID } from "crypto";
+import { ulid } from "ulid";
 
 export const generateCorrelationId = (): string => {
-  return randomUUID();
+  return ulid();
 };

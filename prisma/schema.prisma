@@ -7,13 +7,35 @@ datasource db {
 }
 
 model Vendor {
-  id          String   @id
-  name        String
-  status      String
-  createdAt  DateTime @map("created_at")
+  id         String    @id
+  name       String
+  status     String
+  createdAt  DateTime  @map("created_at")
   approvedAt DateTime? @map("approved_at")
 
-  location   Unsupported("geography(Point,4326)")?
+  location Unsupported("geography(Point,4326)")?
 
   @@map("vendors")
+}
+
+model ApprovalDecision {
+  id         String   @id
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  decision   String
+  reason     String?
+  decidedAt  DateTime @map("decided_at")
+
+  @@map("approval_decisions")
+}
+
+model AuditLog {
+  id        String   @id
+  action    String
+  entity    String
+  entityId  String   @map("entity_id")
+  metadata  Json?    @map("metadata")
+  createdAt DateTime @map("created_at")
+
+  @@map("audit_logs")
 }
