@@ -18,34 +18,34 @@ export async function adminApproveVendor(params: {
   vendor.approve();
   await vendorRepository.save(vendor);
 
-  await prisma.approvalDecision.create({
-    data: {
-      id: ulid(),
-      entityType: "vendor",
-      entityId: vendorId,
-      decision: "APPROVED",
-      decidedAt: new Date(),
-    },
-  });
+  await prisma.$transaction([
+    prisma.approvalDecision.create({
+      data: {
+        id: ulid(),
+        entityType: "vendor",
+        entityId: vendorId,
+        decision: "APPROVED",
+        decidedAt: new Date(),
+      },
+    }),
 
-  await prisma.auditLog.create({
-    data: {
-      id: ulid(),
-      action: "VENDOR_APPROVED",
-      entity: "vendor",
-      entityId: vendorId,
-      createdAt: new Date(),
-    },
-  });
+    prisma.auditLog.create({
+      data: {
+        id: ulid(),
+        action: "VENDOR_APPROVED",
+        entity: "vendor",
+        entityId: vendorId,
+        createdAt: new Date(),
+      },
+    }),
+  ]);
 
   eventBus.publish(
     createEvent({
       type: EventTypes.VendorApproved,
       aggregateType: AggregateTypes.Vendor,
       aggregateId: vendorId,
-      payload: {
-        status: "APPROVED",
-      },
+      payload: { status: "APPROVED" },
       correlationId,
       actorId,
     })

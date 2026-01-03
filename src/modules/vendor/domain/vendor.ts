@@ -1,5 +1,10 @@
 import { VendorProps, VendorStatus } from "./vendorTypes";
-import { VendorAlreadyApprovedError, VendorNotPendingError } from "./vendorErrors";
+import {
+  VendorAlreadyApprovedError,
+  VendorAlreadyRejectedError,
+  VendorAlreadySuspendedError,
+  VendorNotPendingError,
+} from "./vendorErrors";
 
 export class Vendor {
   private props: VendorProps;
@@ -36,6 +41,22 @@ export class Vendor {
     this.props.approvedAt = new Date().toISOString();
   }
 
+  reject(): void {
+    if (this.props.status === "REJECTED") {
+      throw new VendorAlreadyRejectedError();
+    }
+
+    this.props.status = "REJECTED";
+  }
+
+  suspend(): void {
+    if (this.props.status === "SUSPENDED") {
+      throw new VendorAlreadySuspendedError();
+    }
+
+    this.props.status = "SUSPENDED";
+  }
+
   get snapshot(): VendorProps {
     return { ...this.props };
   }
@@ -48,4 +69,3 @@ export class Vendor {
     return this.props.status;
   }
 }
-

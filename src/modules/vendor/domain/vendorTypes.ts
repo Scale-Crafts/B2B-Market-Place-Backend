@@ -1,6 +1,7 @@
 export type VendorStatus =
   | "PENDING"
   | "APPROVED"
+  | "REJECTED"
   | "SUSPENDED";
 
 export interface VendorProps {

@@ -1,6 +1,8 @@
 export const EventTypes = {
     VendorCreated: "vendor.created",
     VendorApproved: "vendor.approved",
+    VendorRejected: "vendor.rejected",
+    VendorSuspended: "vendor.suspended",
   
     ProductSubmitted: "product.submitted",
     ProductApproved: "product.approved",
@@ -13,4 +15,4 @@ export const EventTypes = {
   } as const;
   
   export type EventType = typeof EventTypes[keyof typeof EventTypes];
-  
+    

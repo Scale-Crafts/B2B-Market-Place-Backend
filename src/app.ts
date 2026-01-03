@@ -5,7 +5,9 @@ import { createEvent } from "./infrastructure/events/createEvent";
 import { EventTypes } from "./infrastructure/events/eventTypes";
 import "./modules/audit/testAuditListener";
 import { createVendor, approveVendor } from "./modules/vendor/index";
-import { adminApproveVendor } from "./modules/admin/application/approveVendor";
+import { adminApproveVendor } from "./modules/admin/application/adminApproveVendor";
+import { adminSuspendVendor } from "./modules/admin/application/adminSuspendVendor";
+import { adminRejectVendor } from "./modules/admin/application/adminRejectVendor";
 
 export const createApp = () => {
   const app = express();
@@ -56,6 +58,22 @@ export const createApp = () => {
     });
     res.status(200).json({ status: "approved" });
   });
+
+  app.post("/__admin/vendor/:id/suspend", async (req, res) => {
+    await adminSuspendVendor({
+      vendorId: req.params.id,
+      correlationId: req.headers["x-correlation-id"] as string,
+    });
+    res.status(200).json({ status: "suspended" });
+  });
+
+  app.post("/__admin/vendor/:id/reject", async (req, res) => {
+    await adminRejectVendor({
+      vendorId: req.params.id,
+      correlationId: req.headers["x-correlation-id"] as string,
+    });
+    res.status(200).json({ status: "rejected" });
+  }); 
 
   return app;
 };
