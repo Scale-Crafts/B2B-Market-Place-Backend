@@ -1,18 +1,41 @@
-import { Vendor } from "../domain/vendor.js";
+import { Vendor } from "../domain/vendor";
+import { prisma } from "../../../infrastructure/persistence/prisma/client";
 
 class VendorRepository {
-  private store = new Map<string, Vendor>();
-
   async save(vendor: Vendor): Promise<void> {
-    this.store.set(vendor.id, vendor);
+    const v = vendor.snapshot;
+
+    await prisma.vendor.upsert({
+      where: { id: v.id },
+      create: {
+        id: v.id,
+        name: v.name,
+        status: v.status,
+        createdAt: new Date(v.createdAt),
+        approvedAt: v.approvedAt ? new Date(v.approvedAt) : null,
+      },
+      update: {
+        name: v.name,
+        status: v.status,
+        approvedAt: v.approvedAt ? new Date(v.approvedAt) : null,
+      },
+    });
   }
 
   async getById(id: string): Promise<Vendor> {
-    const vendor = this.store.get(id);
-    if (!vendor) {
+    const row = await prisma.vendor.findUnique({ where: { id } });
+
+    if (!row) {
       throw new Error("Vendor not found");
     }
-    return vendor;
+
+    return Vendor.rehydrate({
+      id: row.id,
+      name: row.name,
+      status: row.status as any,
+      createdAt: row.createdAt.toISOString(),
+      approvedAt: row.approvedAt?.toISOString(),
+    });
   }
 }
 

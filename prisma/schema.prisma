@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Vendor {
+  id          String   @id
+  name        String
+  status      String
+  createdAt  DateTime @map("created_at")
+  approvedAt DateTime? @map("approved_at")
+
+  location   Unsupported("geography(Point,4326)")?
+
+  @@map("vendors")
+}

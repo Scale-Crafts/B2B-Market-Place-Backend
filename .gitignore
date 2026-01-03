@@ -45,3 +45,5 @@ logs/
 # =========================
 .cache/
 .tmp/
+
+/src/generated/prisma

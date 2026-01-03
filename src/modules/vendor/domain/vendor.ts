@@ -8,6 +8,7 @@ export class Vendor {
     this.props = props;
   }
 
+  // For NEW vendors (business intent)
   static create(id: string, name: string): Vendor {
     return new Vendor({
       id,
@@ -15,6 +16,11 @@ export class Vendor {
       status: "PENDING",
       createdAt: new Date().toISOString(),
     });
+  }
+
+  // For EXISTING vendors (persistence → domain)
+  static rehydrate(props: VendorProps): Vendor {
+    return new Vendor(props);
   }
 
   approve(): void {
@@ -42,3 +48,4 @@ export class Vendor {
     return this.props.status;
   }
 }
+
